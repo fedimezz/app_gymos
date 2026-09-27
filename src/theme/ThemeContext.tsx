@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Appearance } from "react-native";
-import * as SecureStore from "expo-secure-store";
+import { storage } from "@/lib/storage";
 import { buildPalette, type Palette } from "@/theme/palette";
 
 export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;
@@ -33,7 +33,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [clubPrimaryColor, setClubPrimaryColorState] = useState<string | null>(null);
 
   useEffect(() => {
-    SecureStore.getItemAsync(THEME_MODE_KEY).then((stored) => {
+    storage.getItemAsync(THEME_MODE_KEY).then((stored) => {
       if (stored === "light" || stored === "dark" || stored === "system") setModeState(stored);
     });
     const sub = Appearance.addChangeListener(({ colorScheme }) => setSystemScheme(colorScheme));
@@ -42,15 +42,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const setMode = (next: ThemeMode) => {
     setModeState(next);
-    void SecureStore.setItemAsync(THEME_MODE_KEY, next);
+    void storage.setItemAsync(THEME_MODE_KEY, next);
   };
 
   const isDark = mode === "system" ? systemScheme === "dark" : mode === "dark";
   const colors = useMemo(() => buildPalette(clubPrimaryColor, isDark), [clubPrimaryColor, isDark]);
 
   const value = useMemo(
-    () => ({ colors, isDark, mode, setMode, setClubPrimaryColor: setClubPrimaryColorState }),
-    [colors, isDark, mode]
+      () => ({ colors, isDark, mode, setMode, setClubPrimaryColor: setClubPrimaryColorState }),
+      [colors, isDark, mode]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
