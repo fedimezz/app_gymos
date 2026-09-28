@@ -18,6 +18,17 @@ if (!envApiBaseUrl) {
 }
 export const PLATFORM_API_BASE_URL = envApiBaseUrl;
 
+// Optional, dev-only. /api/clubs/search returns each club's real apiBaseUrl
+// (a per-club subdomain), which doesn't exist yet and can't be reached from
+// a phone over a LAN. When set, searchClubs() (src/api/auth.ts) replaces
+// every result's apiBaseUrl with this value instead, so search still works
+// against a single local backend. Set it the same way as
+// EXPO_PUBLIC_PLATFORM_API_BASE_URL above if you need it; leave unset
+// otherwise — it has no effect in production builds.
+export const DEV_CLUB_API_BASE_URL = __DEV__
+    ? process.env.EXPO_PUBLIC_DEV_CLUB_API_BASE_URL ?? null
+    : null;
+
 // Sent on every request. The backend's login route only returns the raw JWT
 // in the response body when it sees this header — see
 // app/api/auth/login/route.ts in the backend repo. Without it the app would

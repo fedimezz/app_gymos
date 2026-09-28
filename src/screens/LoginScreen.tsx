@@ -18,6 +18,7 @@ export default function LoginScreen() {
       // No navigation call needed here — RootNavigator switches to the
       // logged-in stack automatically once AuthContext's `user` becomes non-null.
     } catch (e) {
+        console.log("LOGIN ERROR:", e);
       setError(e instanceof ApiError ? e.message : "Connexion impossible. Réessayez.");
     } finally {
       setLoading(false);
